@@ -1,0 +1,11 @@
+<mat-nav-list>
+  @for (link of links(); track $index) {
+  <a
+    mat-list-item
+    [routerLink]="['/import/', link.id]"
+    routerLinkActive="mdc-list-item--activated"
+  >
+    {{ link.label }}
+  </a>
+  }
+</mat-nav-list>

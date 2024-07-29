@@ -1,0 +1,18 @@
+<div class="container">
+  <mat-toolbar>
+    <a class="app-name" routerLink="/import">Photo Table</a>
+    <button mat-raised-button color="primary" (click)="importFiles()">
+      import
+    </button>
+  </mat-toolbar>
+
+  <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav opened mode="side">
+      <app-import-navigation />
+    </mat-sidenav>
+
+    <mat-sidenav-content class="sidenav-content">
+      <router-outlet />
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
