@@ -6,15 +6,4 @@
 
 .gallery-item {
   place-self: center;
-  cursor: pointer;
-  border: 1px solid transparent;
-  transition: border-color 0.3s;
-
-  img {
-    display: block;
-  }
-
-  &:hover {
-    border-color: #000;
-  }
 }

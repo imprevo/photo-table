@@ -3,11 +3,12 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { GalleryService } from 'src/app/services/gallery.service';
 import { GalleryDialogComponent } from '../gallery-dialog/gallery-dialog.component';
+import { GalleryItemComponent } from '../gallery-item/gallery-item.component';
 
 @Component({
   selector: 'app-gallery-grid',
   standalone: true,
-  imports: [],
+  imports: [GalleryItemComponent],
   templateUrl: './gallery-grid.component.html',
   styleUrl: './gallery-grid.component.scss',
 })
@@ -15,7 +16,12 @@ export class GalleryGridComponent {
   private dialog = inject(MatDialog);
   private galleryService = inject(GalleryService);
 
-  public urls = toSignal(this.galleryService.urls$, { initialValue: [] });
+  public activeItemId = toSignal(this.galleryService.activeItemId$);
+  public items = toSignal(this.galleryService.items$, { initialValue: [] });
+
+  setActive(id: string) {
+    this.galleryService.setActiveItem(id);
+  }
 
   openPhoto() {
     this.dialog.open(GalleryDialogComponent, {

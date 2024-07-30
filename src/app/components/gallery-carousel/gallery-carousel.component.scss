@@ -3,3 +3,7 @@
   gap: 8px;
   height: 100px;
 }
+
+.gallery-item {
+  flex-shrink: 0;
+}
