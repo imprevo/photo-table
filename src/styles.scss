@@ -12,3 +12,11 @@ body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
+
+img {
+  max-width: 100%;
+}
+
+.dialog-fullscreen {
+  --mdc-dialog-container-shape: 0;
+}

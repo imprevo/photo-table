@@ -1,0 +1,7 @@
+<div class="gallery">
+  @for (url of urls(); track $index) {
+  <div class="gallery-item" (dblclick)="openPhoto()">
+    <img [src]="url" />
+  </div>
+  }
+</div>

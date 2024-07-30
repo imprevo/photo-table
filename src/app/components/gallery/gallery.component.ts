@@ -2,17 +2,17 @@ import { Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { map, switchMap } from 'rxjs';
-import { MatGridListModule } from '@angular/material/grid-list';
 import { ImportService } from 'src/app/services/import.service';
+import { GalleryGridComponent } from '../gallery-grid/gallery-grid.component';
 
 @Component({
-  selector: 'app-photos-grid',
+  selector: 'app-gallery',
   standalone: true,
-  imports: [MatGridListModule],
-  templateUrl: './photos-grid.component.html',
-  styleUrl: './photos-grid.component.scss',
+  imports: [GalleryGridComponent],
+  templateUrl: './gallery.component.html',
+  styleUrl: './gallery.component.scss',
 })
-export class PhotosGridComponent {
+export class GalleryComponent {
   private route = inject(ActivatedRoute);
   private importService = inject(ImportService);
 
@@ -21,7 +21,7 @@ export class PhotosGridComponent {
     switchMap((id) => this.importService.getImportById(id))
   );
 
-  public name = toSignal(this.import$.pipe(map((data) => data?.label)), {
+  public galleryName = toSignal(this.import$.pipe(map((data) => data?.label)), {
     initialValue: '',
   });
 }

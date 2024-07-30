@@ -1,6 +1,6 @@
 import { Route } from '@angular/router';
 import { ImportPhotosComponent } from './components/import-photos/import-photos.component';
-import { PhotosGridComponent } from './components/photos-grid/photos-grid.component';
+import { GalleryComponent } from './components/gallery/gallery.component';
 import { ImportStartComponent } from './components/import-start/import-start.component';
 
 export const appRoutes: Route[] = [
@@ -9,7 +9,8 @@ export const appRoutes: Route[] = [
     component: ImportPhotosComponent,
     children: [
       { path: '', component: ImportStartComponent },
-      { path: ':id', component: PhotosGridComponent },
+      // TODO: check if exists
+      { path: ':id', component: GalleryComponent },
     ],
   },
   { path: '**', redirectTo: 'import' },

@@ -1,0 +1,20 @@
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(258px, 1fr));
+  gap: 8px;
+}
+
+.gallery-item {
+  place-self: center;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: border-color 0.3s;
+
+  img {
+    display: block;
+  }
+
+  &:hover {
+    border-color: #000;
+  }
+}
