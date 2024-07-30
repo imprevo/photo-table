@@ -3,36 +3,34 @@ import { BehaviorSubject, combineLatest, map, of } from 'rxjs';
 
 interface GalleryItem {
   id: string;
-  imageFull: string;
-  imagePreview: string;
+  sourceUrl: string;
+  thumbnailUrl: string;
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class GalleryService {
   private _activeItemId$ = new BehaviorSubject<string | null>(null);
 
   public items$ = of<GalleryItem[]>([
     {
       id: '1',
-      imageFull: 'https://placehold.co/1080x1080',
-      imagePreview: 'https://placehold.co/256x256',
+      sourceUrl: 'https://placehold.co/1080x1080',
+      thumbnailUrl: 'https://placehold.co/256x256?text=1',
     },
     {
       id: '2',
-      imageFull: 'https://placehold.co/1080x512',
-      imagePreview: 'https://placehold.co/256x128',
+      sourceUrl: 'https://placehold.co/1080x512',
+      thumbnailUrl: 'https://placehold.co/256x128?text=2',
     },
     {
       id: '3',
-      imageFull: 'https://placehold.co/512x1080',
-      imagePreview: 'https://placehold.co/128x256',
+      sourceUrl: 'https://placehold.co/512x1080',
+      thumbnailUrl: 'https://placehold.co/128x256?text=3',
     },
     {
       id: '4',
-      imageFull: 'https://placehold.co/512x512',
-      imagePreview: 'https://placehold.co/128x128',
+      sourceUrl: 'https://placehold.co/512x512',
+      thumbnailUrl: 'https://placehold.co/128x128?text=4',
     },
   ]);
 

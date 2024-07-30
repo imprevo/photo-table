@@ -3,6 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { map, switchMap } from 'rxjs';
 import { ImportService } from 'src/app/services/import.service';
+import { GalleryService } from 'src/app/services/gallery.service';
 import { GalleryGridComponent } from '../gallery-grid/gallery-grid.component';
 
 @Component({
@@ -11,6 +12,7 @@ import { GalleryGridComponent } from '../gallery-grid/gallery-grid.component';
   imports: [GalleryGridComponent],
   templateUrl: './gallery.component.html',
   styleUrl: './gallery.component.scss',
+  providers: [GalleryService],
 })
 export class GalleryComponent {
   private route = inject(ActivatedRoute);

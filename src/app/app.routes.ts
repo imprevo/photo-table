@@ -10,7 +10,11 @@ export const appRoutes: Route[] = [
     children: [
       { path: '', component: ImportStartComponent },
       // TODO: check if exists
-      { path: ':id', component: GalleryComponent },
+      {
+        path: ':id',
+        component: GalleryComponent,
+        data: { shouldReuseRoute: false },
+      },
     ],
   },
   { path: '**', redirectTo: 'import' },

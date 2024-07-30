@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ViewContainerRef } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { GalleryService } from 'src/app/services/gallery.service';
@@ -15,6 +15,7 @@ import { GalleryItemComponent } from '../gallery-item/gallery-item.component';
 export class GalleryGridComponent {
   private dialog = inject(MatDialog);
   private galleryService = inject(GalleryService);
+  private viewContainerRef = inject(ViewContainerRef);
 
   public activeItemId = toSignal(this.galleryService.activeItemId$);
   public items = toSignal(this.galleryService.items$, { initialValue: [] });
@@ -30,6 +31,7 @@ export class GalleryGridComponent {
       maxWidth: '100vw',
       maxHeight: '100vh',
       panelClass: 'dialog-fullscreen',
+      viewContainerRef: this.viewContainerRef,
     });
   }
 }

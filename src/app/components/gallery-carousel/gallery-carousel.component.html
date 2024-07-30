@@ -2,7 +2,7 @@
   @for (item of items(); track $index) {
   <app-gallery-item
     class="gallery-item"
-    [url]="item.imagePreview"
+    [url]="item.thumbnailUrl"
     [isActive]="item.id === activeItemId()"
     (click)="setActive(item.id)"
   />
