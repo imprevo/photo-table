@@ -1,11 +1,14 @@
 /// <reference types="@types/wicg-file-system-access" />
 
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, map, of } from 'rxjs';
+import { DBAdapter } from './db-adapter';
+import { Router } from '@angular/router';
 
 export interface ImportBase {
   id: string;
   label: string;
+  files: ImportedFile[];
 }
 
 export interface ImportedFile {
@@ -18,14 +21,12 @@ export interface ImportedFile {
   providedIn: 'root',
 })
 export class ImportService {
-  private imports$ = of<ImportBase[]>([
-    { id: '1', label: '2021' },
-    { id: '2', label: '2022' },
-    { id: '3', label: '2023' },
-    { id: '4', label: '2024' },
-  ]);
+  private dbAdapter = inject(DBAdapter);
+  private router = inject(Router);
 
-  private files$ = new BehaviorSubject<ImportedFile[]>([]);
+  private _imports$ = new BehaviorSubject<ImportBase[]>([]);
+
+  private imports$ = this._imports$.asObservable();
 
   public getImportList() {
     return this.imports$;
@@ -37,17 +38,39 @@ export class ImportService {
     );
   }
 
-  public getImportFilesById() {
-    // TODO: get by id
-    return this.files$.asObservable();
+  public getImportFilesById(id: string) {
+    return this.getImportById(id).pipe(map((data) => data?.files));
   }
 
-  public openDirectory() {
-    this.getDirectory();
+  public async loadImports() {
+    const records = this.dbAdapter.getStore('imports').getAll();
+
+    records.addEventListener('success', async () => {
+      if (!records.result.length) {
+        return;
+      }
+
+      for await (const data of records.result) {
+        this.getFiles(data.id.toString(), data.dirHandle);
+      }
+    });
   }
 
-  private async getDirectory() {
+  public async openDirectory() {
     const dirHandle = await window.showDirectoryPicker();
+    const req = this.dbAdapter.getStore('imports').add({
+      name: dirHandle.name,
+      dirHandle,
+    });
+
+    req.addEventListener('success', () => {
+      const id = req.result.toString();
+      this.getFiles(id, dirHandle);
+      this.router.navigate(['/import', id]);
+    });
+  }
+
+  private async getFiles(id: string, dirHandle: FileSystemDirectoryHandle) {
     const files: ImportedFile[] = [];
 
     for await (const [name, handle] of dirHandle.entries()) {
@@ -60,8 +83,12 @@ export class ImportService {
       }
     }
 
-    console.log('files', files);
-    this.files$.next(files);
+    const importEntity: ImportBase = {
+      id,
+      label: dirHandle.name,
+      files,
+    };
+    this._imports$.next([...this._imports$.value, importEntity]);
   }
 
   private async getFileContent(file: File) {

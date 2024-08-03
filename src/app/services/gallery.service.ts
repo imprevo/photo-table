@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import {
   BehaviorSubject,
   combineLatest,
+  filter,
   map,
   shareReplay,
   switchMap,
@@ -22,11 +23,14 @@ export class GalleryService {
   private importService = inject(ImportService);
   private imageService = inject(ImageService);
 
+  private _importId$ = new BehaviorSubject<string | null>(null);
   private _activeItemId$ = new BehaviorSubject<string | null>(null);
 
-  public items$ = this.importService.getImportFilesById().pipe(
-    switchMap((res) =>
-      Promise.all(res.map((data) => this.prepareImages(data)))
+  public items$ = this._importId$.pipe(
+    filter(Boolean),
+    switchMap((id) => this.importService.getImportFilesById(id)),
+    switchMap((files) =>
+      files ? Promise.all(files.map((file) => this.prepareImages(file))) : []
     ),
     shareReplay(1)
   );
@@ -51,6 +55,10 @@ export class GalleryService {
       items.find((item) => item.id === activeItemId)
     )
   );
+
+  public init(importId: string) {
+    this._importId$.next(importId);
+  }
 
   public setActiveItem(id: string) {
     this._activeItemId$.next(id);

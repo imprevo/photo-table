@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -19,8 +19,12 @@ import { ImportNavigationComponent } from '../import-navigation/import-navigatio
   templateUrl: './import-photos.component.html',
   styleUrl: './import-photos.component.scss',
 })
-export class ImportPhotosComponent {
+export class ImportPhotosComponent implements OnInit {
   private importService = inject(ImportService);
+
+  public ngOnInit() {
+    this.importService.loadImports();
+  }
 
   public importFiles() {
     this.importService.openDirectory();

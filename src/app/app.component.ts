@@ -8,6 +8,4 @@ import { RouterModule } from '@angular/router';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent {
-  title = 'photo-table';
-}
+export class AppComponent {}
