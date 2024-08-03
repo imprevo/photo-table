@@ -1,9 +1,17 @@
-import { Injectable } from '@angular/core';
-import { map, of } from 'rxjs';
+/// <reference types="@types/wicg-file-system-access" />
 
-interface ImportBase {
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, map, of } from 'rxjs';
+
+export interface ImportBase {
   id: string;
   label: string;
+}
+
+export interface ImportedFile {
+  path: string;
+  file: File;
+  source: string;
 }
 
 @Injectable({
@@ -17,6 +25,8 @@ export class ImportService {
     { id: '4', label: '2024' },
   ]);
 
+  private files$ = new BehaviorSubject<ImportedFile[]>([]);
+
   public getImportList() {
     return this.imports$;
   }
@@ -25,5 +35,52 @@ export class ImportService {
     return this.imports$.pipe(
       map((imports) => imports.find((data) => data.id === id))
     );
+  }
+
+  public getImportFilesById() {
+    // TODO: get by id
+    return this.files$.asObservable();
+  }
+
+  public openDirectory() {
+    this.getDirectory();
+  }
+
+  private async getDirectory() {
+    const dirHandle = await window.showDirectoryPicker();
+    const files: ImportedFile[] = [];
+
+    for await (const [name, handle] of dirHandle.entries()) {
+      const path = `${dirHandle.name}/${name}`;
+
+      if (handle.kind === 'file') {
+        const file = await handle.getFile();
+        const source = (await this.getFileContent(file)) as string;
+        files.push({ path, file, source });
+      }
+    }
+
+    console.log('files', files);
+    this.files$.next(files);
+  }
+
+  private async getFileContent(file: File) {
+    switch (file.type) {
+      case 'image/png':
+      case 'image/jpg':
+      case 'image/jpeg':
+      case 'image/gif':
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.addEventListener('loadend', () => resolve(reader.result));
+          reader.addEventListener('error', (e) => reject(e));
+          reader.readAsDataURL(file);
+          // reader.readAsArrayBuffer(file);
+        });
+
+      default:
+        return null;
+      // return file.text();
+    }
   }
 }

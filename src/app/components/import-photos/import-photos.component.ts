@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
+import { ImportService } from 'src/app/services/import.service';
 import { ImportNavigationComponent } from '../import-navigation/import-navigation.component';
 
 @Component({
@@ -19,7 +20,9 @@ import { ImportNavigationComponent } from '../import-navigation/import-navigatio
   styleUrl: './import-photos.component.scss',
 })
 export class ImportPhotosComponent {
-  importFiles() {
-    alert('Not implemented.');
+  private importService = inject(ImportService);
+
+  public importFiles() {
+    this.importService.openDirectory();
   }
 }

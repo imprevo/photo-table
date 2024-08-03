@@ -1,5 +1,15 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, map, of } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import {
+  BehaviorSubject,
+  combineLatest,
+  map,
+  shareReplay,
+  switchMap,
+} from 'rxjs';
+import { ImportedFile, ImportService } from './import.service';
+import { ImageService } from './image.service';
+
+const THUMBNAIL_SIZE = 256;
 
 interface GalleryItem {
   id: string;
@@ -9,30 +19,30 @@ interface GalleryItem {
 
 @Injectable()
 export class GalleryService {
+  private importService = inject(ImportService);
+  private imageService = inject(ImageService);
+
   private _activeItemId$ = new BehaviorSubject<string | null>(null);
 
-  public items$ = of<GalleryItem[]>([
-    {
-      id: '1',
-      sourceUrl: 'https://placehold.co/1080x1080',
-      thumbnailUrl: 'https://placehold.co/256x256?text=1',
-    },
-    {
-      id: '2',
-      sourceUrl: 'https://placehold.co/1080x512',
-      thumbnailUrl: 'https://placehold.co/256x128?text=2',
-    },
-    {
-      id: '3',
-      sourceUrl: 'https://placehold.co/512x1080',
-      thumbnailUrl: 'https://placehold.co/128x256?text=3',
-    },
-    {
-      id: '4',
-      sourceUrl: 'https://placehold.co/512x512',
-      thumbnailUrl: 'https://placehold.co/128x128?text=4',
-    },
-  ]);
+  public items$ = this.importService.getImportFilesById().pipe(
+    switchMap((res) =>
+      Promise.all(res.map((data) => this.prepareImages(data)))
+    ),
+    shareReplay(1)
+  );
+
+  private async prepareImages(data: ImportedFile) {
+    const thumbnail = await this.imageService.resize(
+      data.source,
+      THUMBNAIL_SIZE,
+      THUMBNAIL_SIZE
+    );
+    return <GalleryItem>{
+      id: data.path,
+      sourceUrl: data.source,
+      thumbnailUrl: URL.createObjectURL(thumbnail),
+    };
+  }
 
   public activeItemId$ = this._activeItemId$.asObservable();
 
