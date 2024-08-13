@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, map } from 'rxjs';
-import { DBAdapter } from './db-adapter';
+import { ImportRecordService } from '@photo-table/data-access';
 import { FSAdapter } from './fs-adapter';
 
 export interface ImportBase {
@@ -20,7 +20,7 @@ export interface ImportedFile {
   providedIn: 'root',
 })
 export class ImportService {
-  private dbAdapter = inject(DBAdapter);
+  private importRecordService = inject(ImportRecordService);
   private fsAdapter = inject(FSAdapter);
   private router = inject(Router);
 
@@ -43,37 +43,26 @@ export class ImportService {
   }
 
   public async loadImports() {
-    const records = this.dbAdapter.getStore('imports').getAll();
-
-    return new Promise<boolean>((res, rej) => {
-      records.addEventListener('success', async () => {
-        if (records.result.length) {
-          for await (const data of records.result) {
-            try {
-              await this.getFiles(data.id.toString(), data.dirHandle);
-            } catch (e) {
-              rej(false);
-            }
-          }
-        }
-        res(true);
-      });
-      records.addEventListener('error', () => rej(false));
-    }).catch(() => false);
+    try {
+      const records = await this.importRecordService.getAll();
+      for await (const data of records) {
+        await this.getFiles(data.id.toString(), data.dirHandle);
+      }
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
   }
 
   public async openDirectory() {
     const dirHandle = await this.fsAdapter.openDirectory();
-    const req = this.dbAdapter.getStore('imports').add({
+    const id = await this.importRecordService.add({
       name: dirHandle.name,
       dirHandle,
     });
-
-    req.addEventListener('success', async () => {
-      const id = req.result.toString();
-      await this.getFiles(id, dirHandle);
-      this.router.navigate(['/import', id]);
-    });
+    await this.getFiles(id, dirHandle);
+    this.router.navigate(['/import', id]);
   }
 
   private async getFiles(id: string, dirHandle: FileSystemDirectoryHandle) {
@@ -99,17 +88,21 @@ export class ImportService {
       case 'image/jpg':
       case 'image/jpeg':
       case 'image/gif':
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.addEventListener('loadend', () => resolve(reader.result));
-          reader.addEventListener('error', (e) => reject(e));
-          reader.readAsDataURL(file);
-          // reader.readAsArrayBuffer(file);
-        });
+        return this.getFileBlob(file);
 
       default:
         return null;
       // return file.text();
     }
+  }
+
+  private getFileBlob(file: File) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.addEventListener('loadend', () => resolve(reader.result));
+      reader.addEventListener('error', (e) => reject(e));
+      reader.readAsDataURL(file);
+      // reader.readAsArrayBuffer(file);
+    });
   }
 }

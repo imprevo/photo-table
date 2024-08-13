@@ -5,9 +5,9 @@ import {
 } from '@angular/core';
 import { provideRouter, RouteReuseStrategy } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { DBAdapter } from '@photo-table/data-access';
 import { appRoutes } from './app.routes';
 import { CustomReuseStrategy } from './services/route-reuse-strategy';
-import { DBAdapter } from './services/db-adapter';
 
 function initializeAppFactory(dbAdapter: DBAdapter) {
   return async () => {

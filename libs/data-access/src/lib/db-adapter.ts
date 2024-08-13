@@ -32,7 +32,9 @@ export class DBAdapter {
     });
   }
 
-  public getStore(name: string) {
-    return this.db.transaction([name], 'readwrite').objectStore(name);
+  public getStore(collection: string) {
+    return this.db
+      .transaction([collection], 'readwrite')
+      .objectStore(collection);
   }
 }
