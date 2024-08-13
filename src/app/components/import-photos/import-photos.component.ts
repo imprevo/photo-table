@@ -1,4 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -18,13 +23,10 @@ import { ImportNavigationComponent } from '../import-navigation/import-navigatio
   ],
   templateUrl: './import-photos.component.html',
   styleUrl: './import-photos.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ImportPhotosComponent implements OnInit {
+export class ImportPhotosComponent {
   private importService = inject(ImportService);
-
-  public ngOnInit() {
-    this.importService.loadImports();
-  }
 
   public importFiles() {
     this.importService.openDirectory();

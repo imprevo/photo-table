@@ -1,9 +1,8 @@
-/// <reference types="@types/wicg-file-system-access" />
-
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, map, of } from 'rxjs';
-import { DBAdapter } from './db-adapter';
 import { Router } from '@angular/router';
+import { BehaviorSubject, map } from 'rxjs';
+import { DBAdapter } from './db-adapter';
+import { FSAdapter } from './fs-adapter';
 
 export interface ImportBase {
   id: string;
@@ -22,6 +21,7 @@ export interface ImportedFile {
 })
 export class ImportService {
   private dbAdapter = inject(DBAdapter);
+  private fsAdapter = inject(FSAdapter);
   private router = inject(Router);
 
   private _imports$ = new BehaviorSubject<ImportBase[]>([]);
@@ -45,27 +45,33 @@ export class ImportService {
   public async loadImports() {
     const records = this.dbAdapter.getStore('imports').getAll();
 
-    records.addEventListener('success', async () => {
-      if (!records.result.length) {
-        return;
-      }
-
-      for await (const data of records.result) {
-        this.getFiles(data.id.toString(), data.dirHandle);
-      }
-    });
+    return new Promise<boolean>((res, rej) => {
+      records.addEventListener('success', async () => {
+        if (records.result.length) {
+          for await (const data of records.result) {
+            try {
+              await this.getFiles(data.id.toString(), data.dirHandle);
+            } catch (e) {
+              rej(false);
+            }
+          }
+        }
+        res(true);
+      });
+      records.addEventListener('error', () => rej(false));
+    }).catch(() => false);
   }
 
   public async openDirectory() {
-    const dirHandle = await window.showDirectoryPicker();
+    const dirHandle = await this.fsAdapter.openDirectory();
     const req = this.dbAdapter.getStore('imports').add({
       name: dirHandle.name,
       dirHandle,
     });
 
-    req.addEventListener('success', () => {
+    req.addEventListener('success', async () => {
       const id = req.result.toString();
-      this.getFiles(id, dirHandle);
+      await this.getFiles(id, dirHandle);
       this.router.navigate(['/import', id]);
     });
   }
@@ -73,14 +79,10 @@ export class ImportService {
   private async getFiles(id: string, dirHandle: FileSystemDirectoryHandle) {
     const files: ImportedFile[] = [];
 
-    for await (const [name, handle] of dirHandle.entries()) {
-      const path = `${dirHandle.name}/${name}`;
-
-      if (handle.kind === 'file') {
-        const file = await handle.getFile();
-        const source = (await this.getFileContent(file)) as string;
-        files.push({ path, file, source });
-      }
+    for await (const file of await this.fsAdapter.getFiles(dirHandle)) {
+      const path = `${dirHandle.name}/${file.name}`;
+      const source = (await this.getFileContent(file)) as string;
+      files.push({ path, file, source });
     }
 
     const importEntity: ImportBase = {

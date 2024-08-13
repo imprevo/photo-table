@@ -1,4 +1,9 @@
-import { Component, inject, ViewContainerRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  ViewContainerRef,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { GalleryService } from 'src/app/services/gallery.service';
@@ -11,6 +16,7 @@ import { GalleryItemComponent } from '../gallery-item/gallery-item.component';
   imports: [GalleryItemComponent],
   templateUrl: './gallery-grid.component.html',
   styleUrl: './gallery-grid.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GalleryGridComponent {
   private dialog = inject(MatDialog);

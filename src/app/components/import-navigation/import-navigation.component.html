@@ -1,5 +1,7 @@
 <mat-nav-list>
-  @for (link of links(); track $index) {
+  @if (showLoadBtn) {
+  <button mat-raised-button (click)="loadImports()">load</button>
+  } @for (link of links(); track $index) {
   <a
     mat-list-item
     [routerLink]="['/import/', link.id]"

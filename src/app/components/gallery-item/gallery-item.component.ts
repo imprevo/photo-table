@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-gallery-item',
@@ -6,6 +6,7 @@ import { Component, input } from '@angular/core';
   imports: [],
   templateUrl: './gallery-item.component.html',
   styleUrl: './gallery-item.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[class.active]': 'isActive()',
   },
