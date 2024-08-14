@@ -9,7 +9,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatListModule } from '@angular/material/list';
-import { ImportService } from 'src/app/services/import.service';
+import { ImportService } from '../../services/import.service';
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({

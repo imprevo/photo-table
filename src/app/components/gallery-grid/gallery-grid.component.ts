@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
-import { GalleryService } from 'src/app/services/gallery.service';
+import { GalleryService } from '../../services/gallery.service';
 import { GalleryDialogComponent } from '../gallery-dialog/gallery-dialog.component';
 import { GalleryItemComponent } from '../gallery-item/gallery-item.component';
 

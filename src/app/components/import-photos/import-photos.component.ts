@@ -1,14 +1,9 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
-import { ImportService } from 'src/app/services/import.service';
+import { ImportService } from '../../services/import.service';
 import { ImportNavigationComponent } from '../import-navigation/import-navigation.component';
 
 @Component({
