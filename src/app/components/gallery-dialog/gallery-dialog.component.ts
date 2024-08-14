@@ -6,8 +6,8 @@ import {
   MatDialogContent,
 } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { GalleryViewerComponent } from '../gallery-viewer/gallery-viewer.component';
 import { GalleryCarouselComponent } from '../gallery-carousel/gallery-carousel.component';
+import { GalleryViewerComponent } from '../gallery-viewer/gallery-viewer.component';
 
 @Component({
   selector: 'app-gallery-dialog',

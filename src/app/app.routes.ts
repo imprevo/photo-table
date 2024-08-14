@@ -1,6 +1,6 @@
 import { Route } from '@angular/router';
-import { ImportPhotosComponent } from './components/import-photos/import-photos.component';
 import { GalleryComponent } from './components/gallery/gallery.component';
+import { ImportPhotosComponent } from './components/import-photos/import-photos.component';
 import { ImportStartComponent } from './components/import-start/import-start.component';
 
 export const appRoutes: Route[] = [

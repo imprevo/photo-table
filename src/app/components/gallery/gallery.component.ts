@@ -2,8 +2,8 @@ import { Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { map, shareReplay, switchMap, tap } from 'rxjs';
-import { ImportService } from '../../services/import.service';
 import { GalleryService } from '../../services/gallery.service';
+import { ImportService } from '../../services/import.service';
 import { GalleryGridComponent } from '../gallery-grid/gallery-grid.component';
 
 @Component({

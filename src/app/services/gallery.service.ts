@@ -7,8 +7,8 @@ import {
   shareReplay,
   switchMap,
 } from 'rxjs';
-import { ImportedFile, ImportService } from './import.service';
 import { ImageService } from './image.service';
+import { ImportedFile, ImportService } from './import.service';
 
 const THUMBNAIL_SIZE = 256;
 
