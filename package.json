@@ -1,5 +1,5 @@
 {
-  "name": "@photo-table/source",
+  "name": "photo-table",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
