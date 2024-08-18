@@ -15,9 +15,13 @@ export class DBAdapter {
 
   public init() {
     return new Promise<void>((res, rej) => {
-      const dbRequest = indexedDB.open('MyTestDatabase', 1);
+      const dbRequest = indexedDB.open('MyTestDatabase', 2);
       dbRequest.addEventListener('upgradeneeded', () => {
         dbRequest.result.createObjectStore('imports', {
+          keyPath: 'id',
+          autoIncrement: true,
+        });
+        dbRequest.result.createObjectStore('thumbnails', {
           keyPath: 'id',
           autoIncrement: true,
         });
@@ -32,9 +36,9 @@ export class DBAdapter {
     });
   }
 
-  public getStore(collection: string) {
+  public getStore(collection: string, write: boolean) {
     return this.db
-      .transaction([collection], 'readwrite')
+      .transaction([collection], write ? 'readwrite' : 'readonly')
       .objectStore(collection);
   }
 }

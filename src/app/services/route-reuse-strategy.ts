@@ -4,7 +4,7 @@ import {
 } from '@angular/router';
 
 export class CustomReuseStrategy extends BaseRouteReuseStrategy {
-  override shouldReuseRoute(
+  public override shouldReuseRoute(
     future: ActivatedRouteSnapshot,
     curr: ActivatedRouteSnapshot
   ) {

@@ -7,10 +7,8 @@ import {
   shareReplay,
   switchMap,
 } from 'rxjs';
-import { ImageService } from './image.service';
 import { ImportedFile, ImportService } from './import.service';
-
-const THUMBNAIL_SIZE = 256;
+import { ThumbnailsService } from './thumbnails.service';
 
 interface GalleryItem {
   id: string;
@@ -20,8 +18,8 @@ interface GalleryItem {
 
 @Injectable()
 export class GalleryService {
+  private thumbnailsService = inject(ThumbnailsService);
   private importService = inject(ImportService);
-  private imageService = inject(ImageService);
 
   private _importId$ = new BehaviorSubject<string | null>(null);
   private _activeItemId$ = new BehaviorSubject<string | null>(null);
@@ -36,10 +34,9 @@ export class GalleryService {
   );
 
   private async prepareImages(data: ImportedFile) {
-    const thumbnail = await this.imageService.resize(
-      data.source,
-      THUMBNAIL_SIZE,
-      THUMBNAIL_SIZE
+    const thumbnail = await this.thumbnailsService.getThumbnail(
+      data.path,
+      data.source
     );
     return <GalleryItem>{
       id: data.path,

@@ -14,15 +14,37 @@ export abstract class BaseRecord<DBRecord extends { id: string }> {
     });
   }
 
+  public getByKeyValue<Key extends keyof DBRecord>(
+    key: Key,
+    value: DBRecord[Key]
+  ) {
+    const req = this.getStore().openCursor();
+    return new Promise<DBRecord | null>((res, rej) => {
+      req.addEventListener('success', () => {
+        const cursor = req.result;
+        if (cursor) {
+          if (cursor.value[key] === value) {
+            res(cursor.value);
+            return;
+          }
+          cursor.continue();
+        } else {
+          res(null);
+        }
+      });
+      req.addEventListener('error', (error) => rej(error));
+    });
+  }
+
   public async add(record: Omit<DBRecord, 'id'>) {
-    const req = this.getStore().add(record);
+    const req = this.getStore(true).add(record);
     return new Promise<string>((res, rej) => {
       req.addEventListener('success', () => res(req.result.toString()));
       req.addEventListener('error', (error) => rej(error));
     });
   }
 
-  private getStore() {
-    return this.dbAdapter.getStore(this.collection);
+  private getStore(write = false) {
+    return this.dbAdapter.getStore(this.collection, write);
   }
 }

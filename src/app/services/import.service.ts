@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, map } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, map } from 'rxjs';
 import { ImportRecordService } from '@photo-table/data-access';
 import { FSAdapter } from './fs-adapter';
 
@@ -34,7 +34,8 @@ export class ImportService {
 
   public getImportById(id: string) {
     return this.imports$.pipe(
-      map((imports) => imports.find((data) => data.id === id))
+      map((imports) => imports.find((data) => data.id === id)),
+      distinctUntilChanged()
     );
   }
 
@@ -69,7 +70,7 @@ export class ImportService {
     const files: ImportedFile[] = [];
 
     for await (const file of await this.fsAdapter.getFiles(dirHandle)) {
-      const path = `${dirHandle.name}/${file.name}`;
+      const path = `${id}/${dirHandle.name}/${file.name}`;
       const source = (await this.getFileContent(file)) as string;
       files.push({ path, file, source });
     }

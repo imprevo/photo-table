@@ -16,7 +16,7 @@ export class GalleryCarouselComponent {
   public activeItemId = toSignal(this.galleryService.activeItemId$);
   public items = toSignal(this.galleryService.items$, { initialValue: [] });
 
-  setActive(id: string) {
+  public setActive(id: string) {
     this.galleryService.setActiveItem(id);
   }
 }
